@@ -1,0 +1,28 @@
+server:
+ port: 8081
+
+spring:
+ application:
+   name: gateway
+
+ cloud:
+  gateway:
+   server:
+    webmvc:
+     routes:
+      - id: producto-service
+        uri: lb://producto-service
+        predicates:
+         - Path=/api/v1/producto/**, /api/v1/items/**, /api/v1/mermas/**, /api/v1/ubicaciones/**
+      - id: prooveedores-service
+        uri: lb://proveedores-service
+        predicates:
+         - Path=/api/v1/detallerecepcion/**, /api/v1/ordenrecepcion/**, /api/v1/proveedor/**
+      - id: cliente-service
+        uri: lb://cliente-service
+        predicates:
+          - Path=/api/v1/clientes/**, /api/v1/despachos/**, /api/v1/operarios/**, /api/v1/pedidos/**, /api/v1/pickings/**
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
