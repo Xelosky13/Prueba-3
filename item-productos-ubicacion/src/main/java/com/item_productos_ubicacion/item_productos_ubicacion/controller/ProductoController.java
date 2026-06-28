@@ -3,6 +3,7 @@ package com.item_productos_ubicacion.item_productos_ubicacion.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel; 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.item_productos_ubicacion.item_productos_ubicacion.DTO.ProductoDTO;
+import com.item_productos_ubicacion.item_productos_ubicacion.assembler.ProductoModelAssembler;
 import com.item_productos_ubicacion.item_productos_ubicacion.service.ProductoService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,9 +26,12 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/productos")
 public class ProductoController {
+    
     @Autowired
     private ProductoService productoService;
 
+    @Autowired
+    private ProductoModelAssembler assembler; 
 
     @GetMapping
     @Operation(
@@ -35,12 +40,14 @@ public class ProductoController {
     )
     @ApiResponse(responseCode = "200", description = "Lista de productos recuperada con éxito")
     @ApiResponse(responseCode = "204", description = "No hay productos registrados en el sistema")
-    public ResponseEntity<List<ProductoDTO>> listarTodos() {
+    public ResponseEntity<CollectionModel<ProductoDTO>> listarTodos() { 
         List<ProductoDTO> productos = productoService.listarTodos();
         if (productos.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return ResponseEntity.ok(productos);
+        
+        CollectionModel<ProductoDTO> productosConLinks = assembler.toCollectionModel(productos);
+        return ResponseEntity.ok(productosConLinks);
     }
 
     @GetMapping("/{id}")
@@ -53,7 +60,9 @@ public class ProductoController {
     public ResponseEntity<?> obtenerPorId(@PathVariable Integer id) {
         try {
             ProductoDTO productoDTO = productoService.obtenerPorId(id);
-            return ResponseEntity.ok(productoDTO);
+            
+            ProductoDTO conLinks = assembler.toModel(productoDTO);
+            return ResponseEntity.ok(conLinks);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -69,7 +78,9 @@ public class ProductoController {
     public ResponseEntity<?> crear(@Valid @RequestBody ProductoDTO productoDTO) {
         try {
             ProductoDTO creado = productoService.crear(productoDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+            
+            ProductoDTO creadoConLinks = assembler.toModel(creado);
+            return ResponseEntity.status(HttpStatus.CREATED).body(creadoConLinks);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -85,7 +96,9 @@ public class ProductoController {
     public ResponseEntity<?> actualizar(@PathVariable Integer id, @Valid @RequestBody ProductoDTO productoDTO) {
         try {
             ProductoDTO actualizado = productoService.actualizar(id, productoDTO);
-            return ResponseEntity.ok(actualizado);
+            
+            ProductoDTO actualizadoConLinks = assembler.toModel(actualizado);
+            return ResponseEntity.ok(actualizadoConLinks);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

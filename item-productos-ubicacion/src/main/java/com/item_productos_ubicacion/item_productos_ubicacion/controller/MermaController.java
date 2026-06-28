@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.item_productos_ubicacion.item_productos_ubicacion.DTO.MermaDTO;
+import com.item_productos_ubicacion.item_productos_ubicacion.assembler.MermaModelAssembler;
 import com.item_productos_ubicacion.item_productos_ubicacion.service.MermaService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +23,9 @@ public class MermaController {
     @Autowired
     private MermaService mermaService;
 
+    @Autowired
+    private MermaModelAssembler assembler;
+
     @PostMapping
     @Operation(
         summary = "Registrar una nueva merma", 
@@ -32,7 +36,10 @@ public class MermaController {
     public ResponseEntity<?> registrarMerma(@Valid @RequestBody MermaDTO mermaDTO) {
         try {
             MermaDTO mermaGuardada = mermaService.registrar(mermaDTO);
-            return new ResponseEntity<>(mermaGuardada, HttpStatus.CREATED);
+            
+            MermaDTO mermaConLinks = assembler.toModel(mermaGuardada);
+            
+            return new ResponseEntity<>(mermaConLinks, HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

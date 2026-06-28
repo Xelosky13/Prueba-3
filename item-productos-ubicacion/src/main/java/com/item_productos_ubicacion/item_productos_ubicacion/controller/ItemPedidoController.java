@@ -3,6 +3,7 @@ package com.item_productos_ubicacion.item_productos_ubicacion.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.item_productos_ubicacion.item_productos_ubicacion.DTO.ItemPedidoDTO;
+import com.item_productos_ubicacion.item_productos_ubicacion.assembler.ItemPedidoModelAssembler;
 import com.item_productos_ubicacion.item_productos_ubicacion.service.ItemPedidoService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +33,9 @@ public class ItemPedidoController {
     @Autowired
     private ItemPedidoService itemPedidoService;
 
+    @Autowired
+    private ItemPedidoModelAssembler assembler; 
+
     @GetMapping
     @Operation(
         summary = "Listar Todos los Items",
@@ -38,16 +43,18 @@ public class ItemPedidoController {
     )
     @ApiResponse(responseCode = "200", description = "Lista de items encontrada")
     @ApiResponse(responseCode = "204", description = "No hay items en el sistema")
-    public ResponseEntity<List<ItemPedidoDTO>> todosLosClientes(){
+    public ResponseEntity<CollectionModel<ItemPedidoDTO>> todosLosClientes(){ 
         List<ItemPedidoDTO> items = itemPedidoService.obtenerTodos();
         if(items.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(items, HttpStatus.OK);
+        
+        CollectionModel<ItemPedidoDTO> itemsConLinks = assembler.toCollectionModel(items);
+        return new ResponseEntity<>(itemsConLinks, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-        @Operation(
+    @Operation(
         summary = "Buscar un ítem de pedido por ID", 
         description = "Obtiene los detalles de un ítem de pedido específico utilizando su identificador único.")
     @ApiResponse(responseCode = "200", description = "Ítem de pedido encontrado exitosamente")
@@ -55,7 +62,9 @@ public class ItemPedidoController {
     public ResponseEntity<ItemPedidoDTO> buscarPorId(@PathVariable Integer id){
         try {
             ItemPedidoDTO item = itemPedidoService.buscarPorId(id);
-            return new ResponseEntity<>(item, HttpStatus.OK);
+            
+            ItemPedidoDTO itemConLinks = assembler.toModel(item);
+            return new ResponseEntity<>(itemConLinks, HttpStatus.OK);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
@@ -70,7 +79,9 @@ public class ItemPedidoController {
     public ResponseEntity<ItemPedidoDTO> agregarItemPedido(@Valid @RequestBody ItemPedidoDTO item) {
         try {
             ItemPedidoDTO guardado = itemPedidoService.guardarItemPedido(item);
-            return new ResponseEntity<>(guardado, HttpStatus.CREATED);
+            
+            ItemPedidoDTO guardadoConLinks = assembler.toModel(guardado);
+            return new ResponseEntity<>(guardadoConLinks, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -86,7 +97,9 @@ public class ItemPedidoController {
     public ResponseEntity<ItemPedidoDTO> editarItemPedido(@PathVariable Integer id, @Valid @RequestBody ItemPedidoDTO dto) {
         try {
             ItemPedidoDTO editado = itemPedidoService.actualizarItemPedido(id, dto);
-            return new ResponseEntity<>(editado, HttpStatus.OK);
+            
+            ItemPedidoDTO editadoConLinks = assembler.toModel(editado);
+            return new ResponseEntity<>(editadoConLinks, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
@@ -105,7 +118,9 @@ public class ItemPedidoController {
     public ResponseEntity<ItemPedidoDTO> actualizarItemPedido(@PathVariable Integer id, @Valid @RequestBody ItemPedidoDTO dto){
         try {
             ItemPedidoDTO actualizado = itemPedidoService.actualizarItemPedido(id, dto);
-            return new ResponseEntity<>(actualizado, HttpStatus.OK);
+            
+            ItemPedidoDTO actualizadoConLinks = assembler.toModel(actualizado);
+            return new ResponseEntity<>(actualizadoConLinks, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {

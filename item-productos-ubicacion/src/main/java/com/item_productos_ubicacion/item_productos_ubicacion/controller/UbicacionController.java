@@ -3,6 +3,7 @@ package com.item_productos_ubicacion.item_productos_ubicacion.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel; 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.item_productos_ubicacion.item_productos_ubicacion.DTO.UbicacionDTO;
+import com.item_productos_ubicacion.item_productos_ubicacion.assembler.UbicacionModelAssembler; 
 import com.item_productos_ubicacion.item_productos_ubicacion.service.UbicacionService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,8 +26,12 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/ubicaciones")
 public class UbicacionController {
+    
     @Autowired
     private UbicacionService ubicacionService;
+
+    @Autowired
+    private UbicacionModelAssembler assembler; 
 
     @PostMapping
     @Operation(
@@ -39,7 +45,9 @@ public class UbicacionController {
         if (response == null) {
             return ResponseEntity.badRequest().build();
         }
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        
+        UbicacionDTO responseConLinks = assembler.toModel(response);
+        return new ResponseEntity<>(responseConLinks, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
@@ -54,7 +62,9 @@ public class UbicacionController {
         if (dto == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(dto);
+        
+        UbicacionDTO dtoConLinks = assembler.toModel(dto);
+        return ResponseEntity.ok(dtoConLinks);
     }
 
     @GetMapping
@@ -64,12 +74,14 @@ public class UbicacionController {
     )
     @ApiResponse(responseCode = "200", description = "Lista de ubicaciones recuperada con éxito")
     @ApiResponse(responseCode = "204", description = "No hay ubicaciones registradas en el sistema")
-    public ResponseEntity<List<UbicacionDTO>> obtenerTodas() {
+    public ResponseEntity<CollectionModel<UbicacionDTO>> obtenerTodas() { 
         List<UbicacionDTO> lista = ubicacionService.obtenerTodas();
         if (lista.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return ResponseEntity.ok(lista);
+        
+        CollectionModel<UbicacionDTO> listaConLinks = assembler.toCollectionModel(lista);
+        return ResponseEntity.ok(listaConLinks);
     }
 
     @DeleteMapping("/{id}")
@@ -99,10 +111,11 @@ public class UbicacionController {
     public ResponseEntity<?> actualizarUbicacion(@PathVariable Integer id, @Valid @RequestBody UbicacionDTO dto) {
         try {
             UbicacionDTO actualizado = ubicacionService.actualizarUbicacion(id, dto);
-            return ResponseEntity.ok(actualizado);
+            
+            UbicacionDTO actualizadoConLinks = assembler.toModel(actualizado);
+            return ResponseEntity.ok(actualizadoConLinks);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
 }
