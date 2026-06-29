@@ -16,7 +16,7 @@ echo Esperando 5 segundos antes del primer microservicio...
 timeout /t 5 /nobreak > nul
 
 echo Iniciando Microservicio cliente...
-cd ../cliente-pedido-depacho
+cd ../cliente-pedido-despacho
 start "MicroServicio Cliente" cmd /k "mvnw spring-boot:run"
 
 echo.
