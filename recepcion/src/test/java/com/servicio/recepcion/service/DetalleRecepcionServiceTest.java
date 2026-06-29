@@ -24,33 +24,46 @@ import com.servicio.recepcion.repository.DetalleRecepcionRepository;
 public class DetalleRecepcionServiceTest {
     @Mock
     private DetalleRecepcionRepository repoDetalle;
-
+    @Mock
+    private ProductoService proService;
     @InjectMocks
     private DetalleRecepcionService serviceDetalle;
 
     @Test
     void buscarPorId() {
         DetalleRecepcion detalle = new DetalleRecepcion();
+
         ProductoExternoDTO producto = new ProductoExternoDTO();
         producto.setId(1);
+
         OrdenRecepcion orden = new OrdenRecepcion();
         orden.setId(1);
 
+        detalle.setId(1);
         detalle.setIdproducto(producto.getId());
         detalle.setOrden(orden);
-        detalle.setId(1);
         detalle.setCantidad(10);
         detalle.setEstado("Recibido");
 
         when(repoDetalle.findById(1))
                 .thenReturn(Optional.of(detalle));
 
+        ProductoExternoDTO productoMock = new ProductoExternoDTO();
+        productoMock.setId(1);
+
+        when(proService.obtenerProducto(1))
+                .thenReturn(productoMock);
+
         DetalleRecepcionDTO dto = serviceDetalle.buscarPorId(1);
 
         assertNotNull(dto);
-        assertEquals(dto.getCantidad(), 10);
+        assertEquals(10, dto.getCantidad());
         assertEquals("Recibido", dto.getEstado());
+
+        assertNotNull(dto.getOrden());
         assertEquals(1, dto.getOrden().getId());
+
+        assertNotNull(dto.getProducto());
         assertEquals(1, dto.getProducto().getId());
     }
 
@@ -87,36 +100,44 @@ public class DetalleRecepcionServiceTest {
 
     @Test
     void actualizarDetalle() {
-        DetalleRecepcion detalle = new DetalleRecepcion();
         OrdenRecepcion orden = new OrdenRecepcion();
         orden.setId(1);
-        ProductoExternoDTO producto = new ProductoExternoDTO();
-        producto.setId(1);
 
+        ProductoExternoDTO productoMock = new ProductoExternoDTO();
+        productoMock.setId(1);
+
+        DetalleRecepcion detalle = new DetalleRecepcion();
+        detalle.setId(1);
         detalle.setCantidad(20);
         detalle.setEstado("Cancelado");
         detalle.setOrden(orden);
-        detalle.setIdproducto(producto.getId());
-        detalle.setId(1);
+        detalle.setIdproducto(1);
 
         DetalleRecepcionDTO nuevoDetalle = new DetalleRecepcionDTO();
-
         nuevoDetalle.setCantidad(10);
         nuevoDetalle.setEstado("Recibido");
         nuevoDetalle.setOrden(orden);
-        nuevoDetalle.setProducto(producto);
+        nuevoDetalle.setProducto(productoMock);
 
         when(repoDetalle.findById(1))
                 .thenReturn(Optional.of(detalle));
 
+        when(proService.obtenerProducto(1))
+                .thenReturn(productoMock);
+
         when(repoDetalle.save(any(DetalleRecepcion.class)))
-                .thenReturn(detalle);
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         DetalleRecepcionDTO resultado = serviceDetalle.actualizarDetalleRecepcion(1, nuevoDetalle);
 
         assertNotNull(resultado);
         assertEquals(10, resultado.getCantidad());
+        assertEquals("Recibido", resultado.getEstado());
+
+        assertNotNull(resultado.getOrden());
         assertEquals(1, resultado.getOrden().getId());
+
+        assertNotNull(resultado.getProducto());
         assertEquals(1, resultado.getProducto().getId());
 
         verify(repoDetalle).save(any(DetalleRecepcion.class));
