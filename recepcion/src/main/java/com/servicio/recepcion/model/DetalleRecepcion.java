@@ -1,7 +1,6 @@
 package com.servicio.recepcion.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,7 +41,7 @@ public class DetalleRecepcion {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ordenrecepcion_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("orden-detalleRecepcion")
     private OrdenRecepcion orden;
 
     @Column(name = "producto_id")

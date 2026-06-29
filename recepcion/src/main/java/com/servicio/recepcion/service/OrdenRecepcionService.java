@@ -1,6 +1,7 @@
 package com.servicio.recepcion.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -31,9 +32,18 @@ public class OrdenRecepcionService {
 
     }
 
-    public OrdenRecepcionDTO buscarPorProveedor(Integer id) {
-        OrdenRecepcion ordenRecepcion = repo.findByProveedor(id);
-        return this.mappearADTO(ordenRecepcion);
+    public List<OrdenRecepcionDTO> mappearListaDTO(List<OrdenRecepcion> ordenes) {
+        List<OrdenRecepcionDTO> listaDTO = new ArrayList<>();
+
+        for (OrdenRecepcion orden : ordenes) {
+            listaDTO.add(mappearADTO(orden));
+        }
+        return listaDTO;
+    }
+
+    public List<OrdenRecepcionDTO> buscarPorProveedor(Integer id) {
+        List<OrdenRecepcion> ordenRecepcion = repo.buscarProveedorId(id);
+        return this.mappearListaDTO(ordenRecepcion);
     }
 
     public OrdenRecepcionDTO buscarPorFechaRecepcion(LocalDate fecha) {

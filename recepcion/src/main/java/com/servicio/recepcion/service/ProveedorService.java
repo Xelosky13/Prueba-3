@@ -1,7 +1,6 @@
 package com.servicio.recepcion.service;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.servicio.recepcion.DTO.ProveedorDTO;
 import com.servicio.recepcion.model.OrdenRecepcion;
@@ -11,10 +10,14 @@ import com.servicio.recepcion.repository.ProveedorRepository;
 
 @Service
 public class ProveedorService {
-    @Autowired
+
     private ProveedorRepository proveRepo;
-    @Autowired
     private OrdenRecepcionRepository ordenrepo;
+
+    public ProveedorService(ProveedorRepository proveRepo, OrdenRecepcionRepository ordenrepo) {
+        this.proveRepo = proveRepo;
+        this.ordenrepo = ordenrepo;
+    }
 
     public ProveedorDTO mapearADTO(Proveedor prov) {
         ProveedorDTO dto = new ProveedorDTO();
@@ -59,7 +62,7 @@ public class ProveedorService {
 
     }
 
-    public List<ProveedorDTO> Proveedores() {
+    public List<ProveedorDTO> proveedores() {
         List<Proveedor> provs = proveRepo.findAll();
 
         return provs.stream().map(this::mapearADTO).toList();
@@ -71,6 +74,8 @@ public class ProveedorService {
         pro.setNombreContacto(dto.getNombreContacto());
         pro.setRut(dto.getRut());
         pro.setTelefono(dto.getTelefono());
+        pro.setOrdenes(dto.getOrdenes());
+
         Proveedor guardado = proveRepo.save(pro);
         return this.mapearADTO(guardado);
     }

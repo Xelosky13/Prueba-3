@@ -10,6 +10,8 @@ import com.servicio.recepcion.exception.RessourceNotfoundException;
 import com.servicio.recepcion.model.DetalleRecepcion;
 import com.servicio.recepcion.repository.DetalleRecepcionRepository;
 
+import jakarta.ws.rs.NotFoundException;
+
 @Service
 public class DetalleRecepcionService {
     private DetalleRecepcionRepository repository;
@@ -23,8 +25,7 @@ public class DetalleRecepcionService {
     public DetalleRecepcionDTO buscarPorId(Integer id) {
 
         DetalleRecepcion response = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Detalle no encontrado con id: " + id));
-
+                .orElseThrow(() -> new NotFoundException("Detalle no encontrado con id: " + id));
         return this.mappearADTO(response);
     }
 

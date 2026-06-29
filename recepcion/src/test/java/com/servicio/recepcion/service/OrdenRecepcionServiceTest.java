@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -57,21 +58,22 @@ public class OrdenRecepcionServiceTest {
 
     @Test
     void buscarPorProveedor() {
+
         OrdenRecepcion orden = new OrdenRecepcion();
         Proveedor prov = new Proveedor();
+
         prov.setId(1);
-
-        orden.setProveedor(prov);
         orden.setId(1);
+        orden.setProveedor(prov);
 
-        when(repo.findByProveedor(1))
-                .thenReturn(orden);
+        when(repo.buscarProveedorId(1))
+                .thenReturn(List.of(orden));
 
-        OrdenRecepcionDTO dto = ordenService.buscarPorProveedor(1);
+        List<OrdenRecepcionDTO> dto = ordenService.buscarPorProveedor(1);
 
         assertNotNull(dto);
-        assertEquals(prov, dto.getProvedor());
-
+        assertEquals(1, dto.size());
+        assertEquals(prov, dto.get(0).getProvedor());
     }
 
     @Test

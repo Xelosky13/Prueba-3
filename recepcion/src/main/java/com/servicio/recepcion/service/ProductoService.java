@@ -13,7 +13,7 @@ public class ProductoService {
     private final WebClient webClient;
 
     public ProductoService(WebClient.Builder builder) {
-        this.webClient = builder.baseUrl("http://localhost:8081").build();
+        this.webClient = builder.baseUrl("http://producto-service").build();
     }
 
     public ProductoExternoDTO obtenerProducto(Integer id) {

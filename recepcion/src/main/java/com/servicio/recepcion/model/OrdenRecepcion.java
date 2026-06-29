@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Column;
@@ -43,10 +44,10 @@ public class OrdenRecepcion {
 
     @ManyToOne
     @JoinColumn(name = "proveedor_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("proveedor-orden")
     private Proveedor proveedor;
 
     @OneToMany(mappedBy = "orden")
-    @JsonBackReference
+    @JsonManagedReference("orden-detalleRecepcion")
     private List<DetalleRecepcion> detalles;
 }

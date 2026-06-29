@@ -1,7 +1,6 @@
 package com.servicio.recepcion.controller;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,36 +29,53 @@ public class ProveedorController {
     @PostMapping()
     @Operation(summary = "Registrar Proveedor", description = "Permite crear un nuevo proveedor")
     public ResponseEntity<ProveedorDTO> guardar(@RequestBody ProveedorDTO dto) {
-        ProveedorDTO response = service.guardarProveedor(dto);
-        if (response == null) {
-            return ResponseEntity.badRequest().build();
+        try {
+            ProveedorDTO response = service.guardarProveedor(dto);
+            if (response == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
         }
-        return ResponseEntity.ok(response);
+
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Buscar Proveedor", description = "Permite obtener un  proveedor por su ID")
     public ResponseEntity<ProveedorDTO> buscarPorId(@PathVariable Integer id) {
-        ProveedorDTO dto = service.buscarPorId(id);
-        if (dto == null) {
-            return ResponseEntity.badRequest().build();
+        try {
+            ProveedorDTO dto = service.buscarPorId(id);
+            if (dto == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
         }
-        return ResponseEntity.ok(dto);
 
     }
 
     @Operation(summary = "Buscar Proveedor por nombre", description = "obtener un proveedor por su nombre")
     @GetMapping("/nombre/{nombre}")
     public ResponseEntity<List<ProveedorDTO>> buscarPornombre(@PathVariable String nombre) {
-        List<ProveedorDTO> dto = service.buscarPorNombre(nombre);
-        if (dto == null) {
-            return ResponseEntity.badRequest().build();
+        try {
+            List<ProveedorDTO> dto = service.buscarPorNombre(nombre);
+            if (dto == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
         }
-        return ResponseEntity.ok(dto);
+
     }
 
     @Operation(summary = "buscar por orden", description = "obtiene un proveedor por un orden_id")
-    @GetMapping("/orden/{orden}")
+    @GetMapping("/orden/{id}")
     public ProveedorDTO buscarPorOrdenes(@PathVariable Integer id) {
         return service.buscarPorOrdenes(id);
 
@@ -67,20 +83,36 @@ public class ProveedorController {
 
     @Operation(summary = "Listar Proveedores", description = "Obtiene una lista de proveedor")
     @GetMapping()
-    public List<ProveedorDTO> Proveedores() {
-        return service.Proveedores();
+    public ResponseEntity<List<ProveedorDTO>> proveedores() {
+        try {
+            return ResponseEntity.ok(service.proveedores());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+
     }
 
     @Operation(summary = "Eliminar Proveedor", description = "Permite eliminar un proveedor por su identificador")
     @DeleteMapping("/{id}")
     public void eliminarProveedor(Integer id) {
-        service.eliminarProveedor(id);
+        try {
+            service.eliminarProveedor(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Operation(summary = "Actualizar Proveedor", description = "Permite actualizar un proveedor por su ID")
     @PutMapping("/{id}")
     public void actualizarProveedor(@PathVariable Integer id, @RequestBody Proveedor pro) {
-        service.actualizarProveedor(id, pro);
+        try {
+            service.actualizarProveedor(id, pro);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
