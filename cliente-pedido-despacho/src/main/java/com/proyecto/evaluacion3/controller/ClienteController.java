@@ -44,4 +44,17 @@ public class ClienteController {
     public ClienteDTO crearCliente(@RequestBody Cliente cliente) {
         return service.guardar(cliente);
     }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar los datos de un cliente")
+    public ClienteDTO actualizarCliente(@PathVariable Integer id, @RequestBody Cliente cliente) {
+        return service.actualizar(id, cliente);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar un cliente por su ID")
+    public void eliminarCliente(@PathVariable Integer id) {
+        service.eliminar(id);
+    }
 }
+

@@ -41,4 +41,19 @@ public class OperarioService {
         dto.setTurno(operario.getTurno());
         return dto;
     }
+
+    public OperarioDTO actualizar(Integer id, Operario operarioActualizado) {
+        Operario operarioExistente = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Operario no encontrado para actualizar"));
+
+        operarioExistente.setNombre(operarioActualizado.getNombre());
+        operarioExistente.setTurno(operarioActualizado.getTurno());
+
+        Operario guardado = repository.save(operarioExistente);
+        return convertirADTO(guardado);
+    }
+
+    public void eliminar(Integer id) {
+        repository.deleteById(id);
+    }
 }

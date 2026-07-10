@@ -75,4 +75,30 @@ public class OperarioServiceTest {
 
         assertEquals(2, resultado.size());
     }
+
+    @Test
+    void actualizar_Exitoso() {
+        Operario operarioViejo = new Operario();
+        operarioViejo.setId(1);
+        operarioViejo.setTurno("Mañana");
+
+        Operario datosNuevos = new Operario();
+        datosNuevos.setNombre("Pedro");
+        datosNuevos.setTurno("Noche");
+
+        org.mockito.Mockito.when(repository.findById(1)).thenReturn(java.util.Optional.of(operarioViejo));
+        org.mockito.Mockito.when(repository.save(org.mockito.Mockito.any(Operario.class))).thenReturn(operarioViejo);
+
+        OperarioDTO resultado = operarioService.actualizar(1, datosNuevos);
+
+        org.junit.jupiter.api.Assertions.assertNotNull(resultado);
+        org.junit.jupiter.api.Assertions.assertEquals("Noche", resultado.getTurno());
+    }
+
+    @Test
+    void eliminar_Exitoso() {
+        org.mockito.Mockito.doNothing().when(repository).deleteById(1);
+        operarioService.eliminar(1);
+        org.mockito.Mockito.verify(repository, org.mockito.Mockito.times(1)).deleteById(1);
+    }
 }

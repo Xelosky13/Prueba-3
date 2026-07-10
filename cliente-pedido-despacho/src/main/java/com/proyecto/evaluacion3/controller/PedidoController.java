@@ -44,4 +44,16 @@ public class PedidoController {
     public PedidoDTO crearPedido(@RequestBody Pedido pedido) {
         return service.guardar(pedido);
     }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar un pedido")
+    public PedidoDTO actualizarPedido(@PathVariable Integer id, @RequestBody Pedido pedido) {
+        return service.actualizar(id, pedido);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar un pedido por su ID")
+    public void eliminarPedido(@PathVariable Integer id) {
+        service.eliminar(id);
+    }
 }

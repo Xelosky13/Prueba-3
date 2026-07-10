@@ -83,4 +83,32 @@ public class PickingServiceTest {
         assertEquals(2, resultado.size());
         assertEquals(1, resultado.get(0).getId());
     }
+
+    @Test
+    void actualizar_Exitoso() {
+        Picking pickingViejo = new Picking();
+        pickingViejo.setId(1);
+
+        Picking datosNuevos = new Picking();
+        datosNuevos.setId(1);
+
+        PickingDTO dtoEsperado = new PickingDTO();
+        dtoEsperado.setId(1);
+
+        org.mockito.Mockito.when(repository.findById(1)).thenReturn(java.util.Optional.of(pickingViejo));
+        org.mockito.Mockito.when(repository.save(org.mockito.Mockito.any(Picking.class))).thenReturn(datosNuevos);
+        org.mockito.Mockito.when(validaciones.convertirADTO(datosNuevos)).thenReturn(dtoEsperado);
+
+        PickingDTO resultado = pickingService.actualizar(1, datosNuevos);
+
+        org.junit.jupiter.api.Assertions.assertNotNull(resultado);
+        org.junit.jupiter.api.Assertions.assertEquals(1, resultado.getId());
+    }
+
+    @Test
+    void eliminar_Exitoso() {
+        org.mockito.Mockito.doNothing().when(repository).deleteById(1);
+        pickingService.eliminar(1);
+        org.mockito.Mockito.verify(repository, org.mockito.Mockito.times(1)).deleteById(1);
+    }
 }

@@ -36,4 +36,14 @@ public class OperarioController {
     public OperarioDTO crearOperario(@RequestBody Operario operario) {
         return service.guardar(operario);
     }
+
+    @PutMapping("/{id}")
+    public OperarioDTO actualizarOperario(@PathVariable Integer id, @RequestBody Operario operario) {
+        return service.actualizar(id, operario);
+    }
+
+    @DeleteMapping("/{id}")
+    public void eliminarOperario(@PathVariable Integer id) {
+        service.eliminar(id);
+    }
 }

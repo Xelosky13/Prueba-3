@@ -36,4 +36,17 @@ public class DespachoService {
         Despacho guardado = repository.save(nuevoDespacho);
         return validaciones.convertirADTO(guardado);
     }
+
+    public DespachoDTO actualizar(Integer id, Despacho despachoActualizado) {
+        repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Despacho no encontrado para actualizar"));
+
+        despachoActualizado.setId(id);
+        Despacho guardado = repository.save(despachoActualizado);
+        return validaciones.convertirADTO(guardado);
+    }
+
+    public void eliminar(Integer id) {
+        repository.deleteById(id);
+    }
 }
