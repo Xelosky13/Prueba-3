@@ -1,19 +1,19 @@
 spring:
-    application:
-        name: producto-service
+  application:
+    name: producto-service
 
-    datasource:
-        url: jdbc:mysql://localhost:3306/db-bodega
-        username: root
-        password:
+  datasource:
+    url: jdbc:mysql://${DATABASE_HOST:localhost}:3306/db_productos?createDatabaseIfNotExist=true
+    username: root
+    password:
 
-    jpa:
-        hibernate:
-            naming:
-                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 
 server:
-    port: 0
+  port: 0
 
 springdoc:
   swagger-ui:
@@ -24,4 +24,4 @@ springdoc:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE:http://localhost:8761/eureka/}
