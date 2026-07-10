@@ -80,4 +80,30 @@ public class ClienteServiceTest {
         assertEquals("Juan Perez", resultado.get(0).getNombre());
         assertEquals("Maria Lopez", resultado.get(1).getNombre());
     }
+
+    @Test
+    void actualizar_Exitoso() {
+        Cliente clienteViejo = new Cliente();
+        clienteViejo.setId(1);
+        clienteViejo.setNombre("Juan Viejo");
+
+        Cliente datosNuevos = new Cliente();
+        datosNuevos.setNombre("Juan Nuevo");
+        datosNuevos.setRut("12345678-9");
+
+        Mockito.when(repository.findById(1)).thenReturn(java.util.Optional.of(clienteViejo));
+        Mockito.when(repository.save(Mockito.any(Cliente.class))).thenReturn(clienteViejo);
+
+        ClienteDTO resultado = clienteService.actualizar(1, datosNuevos);
+
+        assertNotNull(resultado);
+        assertEquals("Juan Nuevo", resultado.getNombre());
+    }
+
+    @Test
+    void eliminar_Exitoso() {
+        Mockito.doNothing().when(repository).deleteById(1);
+        clienteService.eliminar(1);
+        Mockito.verify(repository, Mockito.times(1)).deleteById(1);
+    }
 }

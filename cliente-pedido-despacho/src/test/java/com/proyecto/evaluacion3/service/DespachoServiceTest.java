@@ -87,4 +87,32 @@ public class DespachoServiceTest {
         assertEquals(1, resultado.get(0).getId());
         assertEquals(2, resultado.get(1).getId());
     }
+
+    @Test
+    void actualizar_Exitoso() {
+        Despacho despachoViejo = new Despacho();
+        despachoViejo.setId(1);
+
+        Despacho datosNuevos = new Despacho();
+        datosNuevos.setId(1);
+
+        DespachoDTO dtoEsperado = new DespachoDTO();
+        dtoEsperado.setId(1);
+
+        Mockito.when(repository.findById(1)).thenReturn(java.util.Optional.of(despachoViejo));
+        Mockito.when(repository.save(Mockito.any(Despacho.class))).thenReturn(datosNuevos);
+        Mockito.when(validaciones.convertirADTO(datosNuevos)).thenReturn(dtoEsperado);
+
+        DespachoDTO resultado = despachoService.actualizar(1, datosNuevos);
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.getId());
+    }
+
+    @Test
+    void eliminar_Exitoso() {
+        Mockito.doNothing().when(repository).deleteById(1);
+        despachoService.eliminar(1);
+        Mockito.verify(repository, Mockito.times(1)).deleteById(1);
+    }
 }

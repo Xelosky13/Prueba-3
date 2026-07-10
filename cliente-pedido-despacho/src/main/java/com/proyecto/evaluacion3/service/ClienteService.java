@@ -42,4 +42,20 @@ public class ClienteService {
         dto.setEmail(cliente.getEmail());
         return dto;
     }
+
+    public ClienteDTO actualizar(Integer id, Cliente clienteActualizado) {
+        Cliente clienteExistente = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado para actualizar"));
+
+        clienteExistente.setRut(clienteActualizado.getRut());
+        clienteExistente.setNombre(clienteActualizado.getNombre());
+        clienteExistente.setEmail(clienteActualizado.getEmail());
+
+        Cliente guardado = repository.save(clienteExistente);
+        return convertirADTO(guardado);
+    }
+
+    public void eliminar(Integer id) {
+        repository.deleteById(id);
+    }
 }

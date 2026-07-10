@@ -44,4 +44,16 @@ public class PickingController {
     public PickingDTO crearPicking(@RequestBody Picking picking) {
         return service.guardar(picking);
     }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar un proceso de picking")
+    public PickingDTO actualizarPicking(@PathVariable Integer id, @RequestBody Picking picking) {
+        return service.actualizar(id, picking);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar un proceso de picking por su ID")
+    public void eliminarPicking(@PathVariable Integer id) {
+        service.eliminar(id);
+    }
 }

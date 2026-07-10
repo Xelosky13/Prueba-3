@@ -44,4 +44,16 @@ public class DespachoController {
     public DespachoDTO crearDespacho(@RequestBody Despacho despacho) {
         return service.guardar(despacho);
     }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar un despacho")
+    public DespachoDTO actualizarDespacho(@PathVariable Integer id, @RequestBody Despacho despacho) {
+        return service.actualizar(id, despacho);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar un despacho por su ID")
+    public void eliminarDespacho(@PathVariable Integer id) {
+        service.eliminar(id);
+    }
 }

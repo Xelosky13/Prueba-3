@@ -36,4 +36,17 @@ public class PickingService {
         Picking guardado = repository.save(nuevoPicking);
         return validaciones.convertirADTO(guardado);
     }
+
+    public PickingDTO actualizar(Integer id, Picking pickingActualizado) {
+        repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Picking no encontrado para actualizar"));
+
+        pickingActualizado.setId(id);
+        Picking guardado = repository.save(pickingActualizado);
+        return validaciones.convertirADTO(guardado);
+    }
+
+    public void eliminar(Integer id) {
+        repository.deleteById(id);
+    }
 }

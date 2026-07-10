@@ -36,4 +36,16 @@ public class PedidoService {
         Pedido guardado = repository.save(nuevoPedido);
         return pedidoValidaciones.convertirADTO(guardado);
     }
+
+    public PedidoDTO actualizar(Integer id, Pedido pedidoActualizado) {
+        repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado para actualizar"));
+        pedidoActualizado.setId(id);
+        Pedido guardado = repository.save(pedidoActualizado);
+        return pedidoValidaciones.convertirADTO(guardado);
+    }
+
+    public void eliminar(Integer id) {
+        repository.deleteById(id);
+    }
 }
